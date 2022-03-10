@@ -2,7 +2,6 @@
 <script setup>
 import toastr from 'toastr'
 import { BigNumber, utils } from 'ethers'
-import { startCountDown } from '@/logic/countdown.js'
 import { formatAmount, getTokenSymbol, getQrcode, initClipboard, parseAmount, getTronWeb } from '@/utils/index'
 import { OnTransferEvent } from '@/logic/transferEvent'
 import { getBlockEvent } from '@/logic/scanBlock'
@@ -31,8 +30,8 @@ const uuid = ref()
 const minutes = ref()
 const seconds = ref()
 const interval = ref()
-const isCheckParam = ref(false)
 const isOverTime = ref(false)
+const isCheckParam = ref(false)
 
 const tokenName = ref()
 const formatedAmount = ref()
@@ -42,6 +41,28 @@ const qrcodeSrc = ref()
 const isComplete = ref(false)
 const hasReceived = ref()
 const hasReceivedShow = ref(0)
+
+function startCountDown(countDownDate) {
+  interval.value = setInterval(() => {
+    const now = new Date().getTime()
+    const distance = countDownDate - now
+    // const days = Math.floor(distance / (1000 * 60 * 60 * 24))
+    // const hours = Math.floor(
+    //   (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    // )
+    minutes.value = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+    seconds.value = Math.floor((distance % (1000 * 60)) / 1000)
+    if (seconds.value < 10)
+      seconds.value = `0${seconds.value}`
+
+    if (distance < 0) {
+      clearInterval(interval.value)
+      isOverTime.value = true
+      console.log('overtime!')
+    }
+  }, 1000)
+}
+
 onMounted(async() => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const params = Object.fromEntries(urlSearchParams.entries())
@@ -64,11 +85,7 @@ onMounted(async() => {
 
   console.log('isCheckParam', isCheckParam.value)
   if (isCheckParam.value) {
-    const obj = startCountDown(deadline.value * 1000)
-    minutes.value = obj.minutes
-    seconds.value = obj.seconds
-    interval.value = obj.interval
-    isOverTime.value = obj.isOverTime
+    startCountDown(deadline.value * 1000)
 
     shortAddress.value = `${rec_address.value.slice(0, 4)}...${rec_address.value.slice(-4)}`
 
