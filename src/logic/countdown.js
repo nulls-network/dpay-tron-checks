@@ -24,5 +24,7 @@ export const startCountDown = function(countDownDate) {
       state.isOverTime = true
     }
   }, 1000)
-  return toRefs(state)
+  return {
+    ...toRefs(state),
+  }
 }

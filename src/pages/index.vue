@@ -13,13 +13,48 @@ import { getBlockEvent } from '@/logic/scanBlock'
   rec_chain: "tron"
   uuid: "c16c5226-2c2e-4d0b-9281-4b0094bb080c"
 */
-if (typeof window !== 'undefined') {
+
+// const pay_token = 'TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj'
+// const deadline = new Date(Date.now() + 1800000).getTime() / 1000
+// const pay_amount = '1'
+// const rec_address = 'TMRhkH627BESu3K2QAJvxpUDR3k6a26NG8'
+// const rec_chain = 'tron'
+// const out_order_no = '123123'
+
+const pay_token = ref()
+const deadline = ref()
+const pay_amount = ref()
+const rec_address = ref()
+const rec_chain = ref()
+const out_order_no = ref()
+const uuid = ref()
+const minutes = ref()
+const seconds = ref()
+const interval = ref()
+const isCheckParam = ref(false)
+const isOverTime = ref(false)
+
+const tokenName = ref()
+const formatedAmount = ref()
+const shortAddress = ref()
+const qrcodeSrc = ref()
+
+const isComplete = ref(false)
+const hasReceived = ref()
+const hasReceivedShow = ref(0)
+onMounted(async() => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const params = Object.fromEntries(urlSearchParams.entries())
-  const { pay_token, deadline, pay_amount, rec_address, rec_chain, uuid, out_order_no } = params
+  pay_token.value = params.pay_token
+  deadline.value = params.deadline
+  pay_amount.value = params.pay_amount
+  rec_address.value = params.rec_address
+  rec_chain.value = params.rec_chain
+  uuid.value = params.uuid
+  out_order_no.value = params.out_order_no
 
   const checkFileds = ['pay_token', 'deadline', 'pay_amount', 'rec_address', 'rec_chain', 'uuid', 'out_order_no']
-  const isCheckParam = ref(Object.values(params).length !== 0)
+  isCheckParam.value = Object.values(params).length !== 0
   for (const key of checkFileds) {
     if (params[key] === undefined || params[key] === null) {
       isCheckParam.value = false
@@ -27,68 +62,55 @@ if (typeof window !== 'undefined') {
     }
   }
 
-  // const pay_token = 'TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj'
-  // const deadline = new Date(Date.now() + 1800000).getTime() / 1000
-  // const pay_amount = '1'
-  // const rec_address = 'TMRhkH627BESu3K2QAJvxpUDR3k6a26NG8'
-  // const rec_chain = 'tron'
-  // const out_order_no = '123123'
+  console.log('isCheckParam', isCheckParam.value)
+  if (isCheckParam.value) {
+    const obj = startCountDown(deadline.value * 1000)
+    minutes.value = obj.minutes
+    seconds.value = obj.seconds
+    interval.value = obj.interval
+    isOverTime.value = obj.isOverTime.value
 
-  const tokenName = ref()
-  const formatedAmount = ref()
-  const shortAddress = ref()
-  const qrcodeSrc = ref()
+    shortAddress.value = `${rec_address.value.slice(0, 4)}...${rec_address.value.slice(-4)}`
 
-  const { isOverTime, interval, minutes, seconds } = startCountDown(deadline * 1000)
+    getTokenSymbol(pay_token.value).then(v => tokenName.value = v)
 
-  const isComplete = ref(false)
-  const hasReceived = ref()
-  const hasReceivedShow = ref(0)
-  onMounted(async() => {
-    console.log('isCheckParam', isCheckParam.value)
-    if (isCheckParam.value) {
-      shortAddress.value = `${rec_address.slice(0, 4)}...${rec_address.slice(-4)}`
+    getQrcode(rec_address.value).then(v => qrcodeSrc.value = v)
 
-      getTokenSymbol(pay_token).then(v => tokenName.value = v)
-
-      getQrcode(rec_address).then(v => qrcodeSrc.value = v)
-
-      const _amount = await parseAmount(pay_amount, pay_token)
-      const hexAddress = (await getTronWeb()).address.toHex(rec_address).slice(2)// remove 41 prefix
-
-      // deadline is absolute half an hour
-      let startTime = (deadline * 1000 - 1800000).toString()
-      startTime = `${startTime.slice(0, startTime.length - 4)}0000`
-      async function transferEventHandler(sumAmount) {
-        if (BigNumber.from(sumAmount).gte(_amount)) {
-          console.log('pay success !')
-          toastr.success('Pay success!', '', {
-            positionClass: 'toast-top-center',
-            timeOut: 0,
-          })
-          hasReceivedShow.value = await formatAmount(sumAmount, pay_token)
-          clearInterval(interval)
-          isComplete.value = true
-        }
-        else {
-          hasReceived.value = sumAmount
-          hasReceivedShow.value = await formatAmount(hasReceived.value, pay_token)
-          setTimeout(() => {
-            getBlockEvent(pay_token, hexAddress, startTime, transferEventHandler)
-          }, 6000)
-        }
-      }
-      getBlockEvent(pay_token, hexAddress, startTime, transferEventHandler)
-    }
-  })
-
-  initClipboard('copyEl', () => {
-    toastr.success(`${rec_address} Copy success!`, '', {
-      positionClass: 'toast-top-center',
-      timeOut: 2500,
+    initClipboard('copyEl', () => {
+      toastr.success(`${rec_address.value} Copy success!`, '', {
+        positionClass: 'toast-top-center',
+        timeOut: 2500,
+      })
     })
-  })
-}
+
+    const _amount = await parseAmount(pay_amount.value, pay_token.value)
+    const hexAddress = (await getTronWeb()).address.toHex(rec_address.value).slice(2)// remove 41 prefix
+
+    // deadline is absolute half an hour
+    let startTime = (deadline.value * 1000 - 1800000).toString()
+    startTime = `${startTime.slice(0, startTime.length - 4)}0000`
+    async function transferEventHandler(sumAmount) {
+      if (BigNumber.from(sumAmount).gte(_amount)) {
+        console.log('pay success !')
+        toastr.success('Pay success!', '', {
+          positionClass: 'toast-top-center',
+          timeOut: 0,
+        })
+        hasReceivedShow.value = await formatAmount(sumAmount, pay_token.value)
+        clearInterval(interval)
+        isComplete.value = true
+      }
+      else {
+        hasReceived.value = sumAmount
+        hasReceivedShow.value = await formatAmount(hasReceived.value, pay_token.value)
+        setTimeout(() => {
+          getBlockEvent(pay_token.value, hexAddress, startTime, transferEventHandler)
+        }, 6000)
+      }
+    }
+    getBlockEvent(pay_token.value, hexAddress, startTime, transferEventHandler)
+  }
+})
 
 </script>
 <template>
@@ -113,11 +135,14 @@ if (typeof window !== 'undefined') {
         Order countdown
       </div>
       <div class="text-center countdown">
-        <template v-if="!isComplete">
+        <template v-if="!isComplete&&!isOverTime">
           <span>{{ minutes }}</span>
           <span style="font-size:16px">Min</span>
           <span>{{ seconds }}</span>
           <span style="font-size:16px">Sec</span>
+        </template>
+        <template v-else-if="isOverTime">
+          Expired!
         </template>
         <template v-else>
           Order Completed!
@@ -143,11 +168,15 @@ if (typeof window !== 'undefined') {
         <span>{{ hasReceivedShow }} {{ tokenName }}</span>
       </p>
       <p
+        v-if="!isOverTime"
         id="status"
         class="wait-text"
         :class="{ 'loading-dot': !isComplete }"
       >
         {{ isComplete ? 'Order Completed' : 'Waiting pay' }}
+      </p>
+      <p v-else class="wait-text">
+        Order Expired
       </p>
       <div class="qrcode-wrap">
         <div class="qrcode">
