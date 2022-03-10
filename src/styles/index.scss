@@ -1,0 +1,98 @@
+body {
+  color: #fff;
+}
+.overlay {
+  background-color: rgba(0, 0, 0, 0.3);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+}
+.wrap {
+  position: absolute;
+  top: 0;
+  z-index: 1000;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 600px;
+  width: 90%;
+  margin: auto;
+  margin-top: 40px;
+  .card-wrap {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    > p {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      > span {
+        height: 30px;
+        line-height: 30px;
+      }
+    }
+    .wait-text {
+      font-size: 24px;
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .qrcode-wrap {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      .qrcode {
+        padding: 12px;
+        border: 1px solid #fff;
+        border-radius: 8px;
+        background-color: #fff;
+      }
+    }
+  }
+}
+
+.countdown {
+  font-size: 30px;
+  text-align: center;
+  height: 50px;
+  margin-bottom: 30px;
+  margin-top: 10px;
+}
+
+.text-center {
+  text-align: center;
+}
+.font-normal {
+  font-style: normal;
+}
+
+.loading-dot:after {
+  content: " .";
+  animation: dots 1s steps(5, end) infinite;
+}
+
+$dotColor: #fff;
+
+@keyframes dots {
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  40% {
+    color: $dotColor;
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  60% {
+    text-shadow: 0.25em 0 0 $dotColor, 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  80%,
+  100% {
+    text-shadow: 0.25em 0 0 $dotColor, 0.5em 0 0 $dotColor;
+  }
+}
+
+
