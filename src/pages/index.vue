@@ -68,7 +68,7 @@ onMounted(async() => {
     minutes.value = obj.minutes
     seconds.value = obj.seconds
     interval.value = obj.interval
-    isOverTime.value = obj.isOverTime.value
+    isOverTime.value = obj.isOverTime
 
     shortAddress.value = `${rec_address.value.slice(0, 4)}...${rec_address.value.slice(-4)}`
 
