@@ -181,7 +181,7 @@ onMounted(async() => {
         </span>
       </p>
       <p>
-        <span>Your pay：</span>
+        <span>Already paid：</span>
         <span>{{ hasReceivedShow }} {{ tokenName }}</span>
       </p>
       <p
