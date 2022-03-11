@@ -1,6 +1,7 @@
 import { utils } from 'ethers'
 import QRCode from 'qrcode'
 import ClipboardJS from 'clipboard'
+import { TronApiKey, TronRPC } from '@/const'
 
 export function getImg(name) {
   const path = `/src/assets/${name}`
@@ -51,14 +52,16 @@ export async function getTronWeb() {
     var TronWeb = (await import('tronweb/dist/TronWeb.js')).default
 
   // const rpc = 'https://api.trongrid.io';//production
-  const rpc = 'https://nile.trongrid.io'
+  const rpc = TronRPC
   const HttpProvider = TronWeb.providers.HttpProvider
   const fullNode = new HttpProvider(rpc)
   const solidityNode = new HttpProvider(rpc)
   const eventServer = new HttpProvider(rpc)
   const tronWeb = new TronWeb(fullNode, solidityNode, eventServer)
   tronWeb.setAddress('TLjg42ZBsEU161bBYorRR9yfve8EKTcZL9')// caller address for query token info
-  // tronWeb.setHeader({ 'TRON-PRO-API-KEY': 'ce2d4035-a3cc-487e-90d5-c575b892f2d4' });
+  if (TronApiKey)
+    tronWeb.setHeader({ 'TRON-PRO-API-KEY': TronApiKey })
+
   getTronWeb.tronWeb = tronWeb
   return tronWeb
 }
@@ -88,4 +91,11 @@ export const getQrcode = function(str) {
       },
     )
   })
+}
+
+// return microseconds
+export const formatToBlockTime = function(time) {
+  let value = time.toString()
+  value = `${value.slice(0, value.length - 4)}0000`
+  return value
 }

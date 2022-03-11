@@ -2,7 +2,7 @@
 <script setup>
 import toastr from 'toastr'
 import { BigNumber, utils } from 'ethers'
-import { formatAmount, getTokenSymbol, getQrcode, initClipboard, parseAmount, getTronWeb } from '@/utils/index'
+import { formatAmount, getTokenSymbol, getQrcode, initClipboard, parseAmount, getTronWeb, formatToBlockTime } from '@/utils/index'
 import { OnTransferEvent } from '@/logic/transferEvent'
 import { getBlockEvent } from '@/logic/scanBlock'
 /*
@@ -104,8 +104,7 @@ onMounted(async() => {
     const hexAddress = (await getTronWeb()).address.toHex(rec_address.value).slice(2)// remove 41 prefix
 
     // deadline is absolute half an hour
-    let startTime = (deadline.value * 1000 - 1800000).toString()
-    startTime = `${startTime.slice(0, startTime.length - 4)}0000`
+    const startTime = formatToBlockTime(deadline.value * 1000 - 1800000)
     async function transferEventHandler(sumAmount) {
       if (BigNumber.from(sumAmount).gte(_amount)) {
         console.log('pay success !')
