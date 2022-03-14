@@ -107,9 +107,9 @@ onMounted(async () => {
     const hexAddress = tronWeb.address.toHex(rec_address.value)
 
     const params = { uuId: uuid.value }
-    const hasPay = ['payed','submited','finished']
+    const hasPay = ['payed', 'submited', 'finished']
     function queryCycle() {
-      QueryResult(params).then(data => {
+      QueryResult(params).then(async data => {
         // payed:付款成功  submited：成交提交到链   finished：清洗数据完成
         if (!(data.code == 0 && hasPay.includes(data.data.status))) {
           setTimeout(() => {
@@ -117,7 +117,21 @@ onMounted(async () => {
           }, 3000);
         }
         else {
-          isComplete.value = true
+          hasReceivedShow.value = data.data.got_amount
+
+          if (+data.data.got_amount == +pay_amount.value) {
+            toastr.success('Pay success!', '', {
+              positionClass: 'toast-top-center',
+              timeOut: 0,
+            })
+            clearInterval(interval)
+            isComplete.value = true
+          }
+          else {
+            setTimeout(() => {
+              queryCycle(params)
+            }, 3000);
+          }
         }
       })
     }
