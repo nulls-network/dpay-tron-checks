@@ -107,16 +107,22 @@ onMounted(async () => {
     const hexAddress = tronWeb.address.toHex(rec_address.value)
 
     const params = { uuId: uuid.value }
-    QueryResult(params).then(data => {
-      if (!(data.code == 0 && data.data.status == 'finished')) {
-        setTimeout(() => {
-          QueryResult(params)
-        }, 3000);
-      }
-      else {
-        isComplete.value = true
-      }
-    })
+
+    function queryCycle() {
+      QueryResult(params).then(data => {
+        if (!(data.code == 0 && data.data.status == 'finished')) {
+          setTimeout(() => {
+            queryCycle(params)
+          }, 3000);
+        }
+        else {
+          isComplete.value = true
+        }
+      })
+    }
+    queryCycle()
+
+
 
 
     // async function transferEventHandler(amount) {
