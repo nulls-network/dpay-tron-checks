@@ -39,6 +39,7 @@
     "critters": "^0.0.11",
     "cross-env": "^7.0.3",
     "eslint": "^8.0.1",
+    "http-proxy-middleware": "^2.0.4",
     "https-localhost": "^4.7.0",
     "markdown-it-link-attributes": "^3.0.0",
     "markdown-it-prism": "^2.2.1",
