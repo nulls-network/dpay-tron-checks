@@ -39,8 +39,9 @@ const shortAddress = ref()
 const qrcodeSrc = ref()
 
 const isComplete = ref(false)
-const hasReceived = ref()
+const hasReceived = ref(0)
 const hasReceivedShow = ref(0)
+
 
 function startCountDown(countDownDate) {
   interval.value = setInterval(() => {
@@ -101,30 +102,28 @@ onMounted(async() => {
     })
 
     const _amount = await parseAmount(pay_amount.value, pay_token.value)
-    const hexAddress = (await getTronWeb()).address.toHex(rec_address.value).slice(2)// remove 41 prefix
+    const tronWeb = await getTronWeb()
+    const hexAddress = tronWeb.address.toHex(rec_address.value)
 
-    // deadline is absolute half an hour
-    const startTime = formatToBlockTime(deadline.value * 1000 - 1800000)
-    async function transferEventHandler(sumAmount) {
-      if (BigNumber.from(sumAmount).gte(_amount)) {
+    async function transferEventHandler(amount) {
+      if(hasReceived.value == 0){
+        hasReceived.value = amount
+      }
+      else{
+        hasReceived.value = BigNumber.from(amount).add(hasReceived.value)
+      }
+      if (BigNumber.from(amount).gte(_amount)) {
         console.log('pay success !')
         toastr.success('Pay success!', '', {
           positionClass: 'toast-top-center',
           timeOut: 0,
         })
-        hasReceivedShow.value = await formatAmount(sumAmount, pay_token.value)
+        hasReceivedShow.value = await formatAmount(hasReceived.value, pay_token.value)
         clearInterval(interval)
         isComplete.value = true
       }
-      else {
-        hasReceived.value = sumAmount
-        hasReceivedShow.value = await formatAmount(hasReceived.value, pay_token.value)
-        setTimeout(() => {
-          getBlockEvent(pay_token.value, hexAddress, startTime, transferEventHandler)
-        }, 6000)
-      }
     }
-    getBlockEvent(pay_token.value, hexAddress, startTime, transferEventHandler)
+    OnTransferEvent(pay_token.value,hexAddress,transferEventHandler)
   }
 })
 
