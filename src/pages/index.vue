@@ -5,6 +5,7 @@ import { BigNumber, utils } from 'ethers'
 import { formatAmount, getTokenSymbol, getQrcode, initClipboard, parseAmount, getTronWeb, formatToBlockTime } from '@/utils/index'
 import { OnTransferEvent } from '@/logic/transferEvent'
 import { getBlockEvent } from '@/logic/scanBlock'
+import { QueryResult } from '@/logic/queryResult'
 /*
   deadline: 1648614867
   pay_amount: "1200000"
@@ -64,7 +65,7 @@ function startCountDown(countDownDate) {
   }, 1000)
 }
 
-onMounted(async() => {
+onMounted(async () => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   const params = Object.fromEntries(urlSearchParams.entries())
   pay_token.value = params.pay_token
@@ -105,25 +106,38 @@ onMounted(async() => {
     const tronWeb = await getTronWeb()
     const hexAddress = tronWeb.address.toHex(rec_address.value)
 
-    async function transferEventHandler(amount) {
-      if(hasReceived.value == 0){
-        hasReceived.value = amount
+    const params = { uuId: uuid.value }
+    QueryResult(params).then(data => {
+      if (!(data.code == 0 && data.data.status == 'finished')) {
+        setTimeout(() => {
+          QueryResult(params)
+        }, 3000);
       }
-      else{
-        hasReceived.value = BigNumber.from(amount).add(hasReceived.value)
-      }
-      if (BigNumber.from(amount).gte(_amount)) {
-        console.log('pay success !')
-        toastr.success('Pay success!', '', {
-          positionClass: 'toast-top-center',
-          timeOut: 0,
-        })
-        hasReceivedShow.value = await formatAmount(hasReceived.value, pay_token.value)
-        clearInterval(interval)
+      else {
         isComplete.value = true
       }
-    }
-    OnTransferEvent(pay_token.value,hexAddress,transferEventHandler)
+    })
+
+
+    // async function transferEventHandler(amount) {
+    //   if(hasReceived.value == 0){
+    //     hasReceived.value = amount
+    //   }
+    //   else{
+    //     hasReceived.value = BigNumber.from(amount).add(hasReceived.value)
+    //   }
+    //   if (BigNumber.from(amount).gte(_amount)) {
+    //     console.log('pay success !')
+    //     toastr.success('Pay success!', '', {
+    //       positionClass: 'toast-top-center',
+    //       timeOut: 0,
+    //     })
+    //     hasReceivedShow.value = await formatAmount(hasReceived.value, pay_token.value)
+    //     clearInterval(interval)
+    //     isComplete.value = true
+    //   }
+    // }
+    // OnTransferEvent(pay_token.value,hexAddress,transferEventHandler)
   }
 })
 
@@ -146,22 +160,16 @@ onMounted(async() => {
   <div class="overlay"></div>
   <div v-if="isCheckParam" class="wrap">
     <div class="card-wrap">
-      <div style="font-size: 18px" class="text-center">
-        Order countdown
-      </div>
+      <div style="font-size: 18px" class="text-center">Order countdown</div>
       <div class="text-center countdown">
-        <template v-if="!isComplete&&!isOverTime">
+        <template v-if="!isComplete && !isOverTime">
           <span>{{ minutes }}</span>
           <span style="font-size:16px">Min</span>
           <span>{{ seconds }}</span>
           <span style="font-size:16px">Sec</span>
         </template>
-        <template v-else-if="isOverTime">
-          Expired!
-        </template>
-        <template v-else>
-          Order Completed!
-        </template>
+        <template v-if="isComplete">Order Completed!</template>
+        <template v-else-if="isOverTime">Expired!</template>
       </div>
       <p>
         <span>Order Number：</span>
@@ -182,17 +190,16 @@ onMounted(async() => {
         <span>Already paid：</span>
         <span>{{ hasReceivedShow }} {{ tokenName }}</span>
       </p>
+
       <p
-        v-if="!isOverTime"
+        v-if="!isComplete && !isOverTime"
         id="status"
         class="wait-text"
         :class="{ 'loading-dot': !isComplete }"
-      >
-        {{ isComplete ? 'Order Completed' : 'Waiting pay' }}
-      </p>
-      <p v-else class="wait-text">
-        Order Expired
-      </p>
+      >{{ 'Waiting pay' }}</p>
+      <p v-if="isComplete" class="wait-text">Order Completed</p>
+      <p v-else-if="isOverTime" class="wait-text">Expired!</p>
+
       <div class="qrcode-wrap">
         <div class="qrcode">
           <img :src="qrcodeSrc" alt style="width: 160px" />
@@ -200,9 +207,7 @@ onMounted(async() => {
       </div>
     </div>
   </div>
-  <div v-else class="wrap">
-    Invalid Param
-  </div>
+  <div v-else class="wrap">Invalid Param</div>
 </template>
 
 <style lang="scss">

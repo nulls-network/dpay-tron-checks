@@ -79,6 +79,13 @@ export default defineConfig({
 
   server: {
     host:'0.0.0.0',
+    proxy: {
+      '/api': {
+        target: 'https://api-tron-v1.dpay.systems',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, ''),
+      },
+    },
     fs: {
       strict: true,
     },
