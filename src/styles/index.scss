@@ -20,6 +20,9 @@ body {
   width: 90%;
   margin: auto;
   margin-top: 40px;
+  @media screen and(max-width:320px) {
+    margin-top: 20px;
+  }
   .card-wrap {
     display: flex;
     flex-direction: column;
@@ -94,5 +97,3 @@ $dotColor: #fff;
     text-shadow: 0.25em 0 0 $dotColor, 0.5em 0 0 $dotColor;
   }
 }
-
-
