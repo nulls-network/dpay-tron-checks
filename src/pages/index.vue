@@ -106,14 +106,13 @@ onMounted(async () => {
     const tronWeb = await getTronWeb()
     const hexAddress = tronWeb.address.toHex(rec_address.value)
 
-    const params = { uuId: uuid.value }
     const hasPay = ['payed', 'submited', 'finished']
     function queryCycle() {
-      QueryResult(params).then(async data => {
+      QueryResult(uuid.value).then(async data => {
         // payed:付款成功  submited：成交提交到链   finished：清洗数据完成
         if (!(data.code == 0 && hasPay.includes(data.data.status))) {
           setTimeout(() => {
-            queryCycle(params)
+            queryCycle()
           }, 3000);
         }
         else {
@@ -129,7 +128,7 @@ onMounted(async () => {
           }
           else {
             setTimeout(() => {
-              queryCycle(params)
+              queryCycle()
             }, 3000);
           }
         }

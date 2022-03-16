@@ -3,10 +3,9 @@ const axiosIns = axios.create({
   withCredentials: true
 })
 
-export const QueryResult = async function(params) {
+export const QueryResult = async function(uuid) {
   return axiosIns({
-    url: '/api/v1/order/findOrder',
+    url: `/api/v1/order/${uuid}`,
     method: 'get',
-    params,
   }).then(res => res.data)
 }
