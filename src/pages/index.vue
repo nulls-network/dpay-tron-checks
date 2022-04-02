@@ -104,7 +104,7 @@ onMounted(async () => {
         function queryCycle() {
             QueryResult(uuid.value).then(async data => {
                 if (data.code == 0) {
-                    create_time.value = moment(data.data.out_time).format() // 创建时间
+                    create_time.value = moment(data.data.out_time).format('YYYY-MM-DD HH:mm:ss') // 创建时间
                 }
                 if (!(data.code == 0 && data.data.status != 'success')) {
                     setTimeout(() => {
