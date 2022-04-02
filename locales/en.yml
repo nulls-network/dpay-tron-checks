@@ -1,14 +1,14 @@
-button:
-  about: About
-  back: Back
-  go: GO
-  home: Home
-  toggle_dark: Toggle dark mode
-  toggle_langs: Change languages
-intro:
-  desc: Opinionated Vite Starter Template
-  dynamic-route: Demo of dynamic route
-  hi: Hi, {name}!
-  aka: Also known as
-  whats-your-name: What's your name?
-not-found: Not found
+alreadyPay: Already paid
+amount: Amount
+copySuccess: Copy success
+expired: Expired
+invaildParam: Invalid Param
+minutes: Min
+noFee: Not contains fee
+orderComplete: Order Completed
+orderCountdown: Order Countdown
+orderNumber: Order Number
+paySuccess: Pay success
+receiver: Receiver
+seconds: Sec
+waitPay: Waiting pay

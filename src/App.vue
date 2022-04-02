@@ -8,6 +8,15 @@ useHead({
     { name: 'description', content: 'DPay checkout for Tron' },
   ],
 })
+
+const {locale} = useI18n()
+onMounted(()=>{
+  const language = navigator.language.slice(0,2)
+  if(language == 'zh'){
+    locale.value = 'zh-CN'
+  }
+})
+
 </script>
 
 <template>

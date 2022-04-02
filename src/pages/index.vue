@@ -6,6 +6,8 @@ import { formatAmount, getTokenSymbol, getQrcode, initClipboard, parseAmount, ge
 import { OnTransferEvent } from '@/logic/transferEvent'
 import { getBlockEvent } from '@/logic/scanBlock'
 import { QueryResult } from '@/logic/queryResult'
+
+const $t = useI18n().t;
 /*
   deadline: 1648614867
   pay_amount: "1200000"
@@ -96,7 +98,7 @@ onMounted(async () => {
     getQrcode(rec_address.value).then(v => qrcodeSrc.value = v)
 
     initClipboard('copyEl', () => {
-      toastr.success(`${rec_address.value} Copy success!`, '', {
+      toastr.success(`${rec_address.value} ${$t('copySuccess')}!`, '', {
         positionClass: 'toast-top-center',
         timeOut: 2500,
       })
@@ -118,7 +120,7 @@ onMounted(async () => {
           hasReceivedShow.value = data.data.got_amount
 
           if (+data.data.got_amount >= +pay_amount.value) {
-            toastr.success('Pay success!', '', {
+            toastr.success(`${$t('paySuccess')}!`, '', {
               positionClass: 'toast-top-center',
               timeOut: 0,
             })
@@ -179,34 +181,34 @@ onMounted(async () => {
   <div class="overlay"></div>
   <div v-if="isCheckParam" class="wrap">
     <div class="card-wrap">
-      <div style="font-size: 18px" class="text-center">Order countdown</div>
+      <div style="font-size: 18px" class="text-center">{{$t('orderCountdown')}}</div>
       <div class="text-center countdown">
         <template v-if="!isComplete && !isOverTime">
           <span>{{ minutes }}</span>
-          <span style="font-size:16px">Min</span>
+          <span style="font-size:16px">{{$t('minutes')}}</span>
           <span>{{ seconds }}</span>
-          <span style="font-size:16px">Sec</span>
+          <span style="font-size:16px">{{$t('seconds')}}</span>
         </template>
-        <template v-if="isComplete">Order Completed!</template>
-        <template v-else-if="isOverTime">Expired!</template>
+        <template v-if="isComplete">{{$t('orderComplete')}}!</template>
+        <template v-else-if="isOverTime">{{$t('expired')}}!</template>
       </div>
       <p>
-        <span>Order Number：</span>
+        <span>{{$t('orderNumber')}}：</span>
         <span>{{ out_order_no }}</span>
       </p>
       <p>
-        <span>Amount：</span>
-        <span>{{ pay_amount }} {{ tokenName }}( Not contains fee )</span>
+        <span>{{$t('amount')}}：</span>
+        <span>{{ pay_amount }} {{ tokenName }}( {{$t('noFee')}} )</span>
       </p>
       <p>
-        <span>Receiver：</span>
+        <span>{{$t('receiver')}}：</span>
         <span class="flex items-center">
           <em class="font-normal">{{ shortAddress }}</em>
           <mdi-content-copy id="copyEl" class="ml-1" :value="rec_address" />
         </span>
       </p>
       <p>
-        <span>Already paid：</span>
+        <span>{{$t('alreadyPay')}}：</span>
         <span>{{ hasReceivedShow }} {{ tokenName }}</span>
       </p>
 
@@ -215,9 +217,9 @@ onMounted(async () => {
         id="status"
         class="wait-text"
         :class="{ 'loading-dot': !isComplete }"
-      >{{ 'Waiting pay' }}</p>
-      <p v-if="isComplete" class="wait-text">Order Completed</p>
-      <p v-else-if="isOverTime" class="wait-text">Expired!</p>
+      >{{ $t('waitPay') }}</p>
+      <p v-if="isComplete" class="wait-text">{{$t('orderComplete')}}</p>
+      <p v-else-if="isOverTime" class="wait-text">{{$t('expired')}}!</p>
 
       <div class="qrcode-wrap">
         <div class="qrcode">
@@ -226,7 +228,7 @@ onMounted(async () => {
       </div>
     </div>
   </div>
-  <div v-else class="wrap">Invalid Param</div>
+  <div v-else class="wrap">{{$t('invaildParam')}}</div>
 </template>
 
 <style lang="scss">
