@@ -117,7 +117,7 @@ onMounted(async () => {
           }, 3000);
         }
         else {
-          hasReceivedShow.value = data.data.got_amount
+          hasReceivedShow.value = data.data.got_amount || 0
 
           if (+data.data.got_amount >= +pay_amount.value) {
             toastr.success(`${$t('paySuccess')}!`, '', {
@@ -193,12 +193,8 @@ onMounted(async () => {
         <template v-else-if="isOverTime">{{$t('expired')}}!</template>
       </div>
       <p>
-        <span>{{$t('orderNumber')}}：</span>
-        <span>{{ out_order_no }}</span>
-      </p>
-      <p>
         <span>{{$t('amount')}}：</span>
-        <span>{{ pay_amount }} {{ tokenName }}( {{$t('noFee')}} )</span>
+        <span> <em class="font-normal text-lg">{{ pay_amount }}</em> {{ tokenName }}( {{$t('noFee')}} )</span>
       </p>
       <p>
         <span>{{$t('receiver')}}：</span>
@@ -206,6 +202,10 @@ onMounted(async () => {
           <em class="font-normal">{{ shortAddress }}</em>
           <mdi-content-copy id="copyEl" class="ml-1" :value="rec_address" />
         </span>
+      </p>
+      <p>
+        <span>{{$t('orderNumber')}}：</span>
+        <span>{{ out_order_no }}</span>
       </p>
       <p>
         <span>{{$t('alreadyPay')}}：</span>
