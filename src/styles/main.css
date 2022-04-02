@@ -17,8 +17,8 @@ html {
 }
 
 #nprogress .bar {
-  @apply bg-teal-600 opacity-75;
-
+  /* @apply bg-teal-600 opacity-75; */
+  background:#7b71fe;
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -42,5 +42,19 @@ html {
   > div {
     opacity: 1;
   }
+}
+
+.loading-mask{
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  border-radius: 8px;
+  padding: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:rgba(0,0,0,.4);
+  z-index:100;
 }
 

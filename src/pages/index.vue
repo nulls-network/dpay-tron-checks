@@ -31,6 +31,7 @@ const qrcodeSrc = ref()
 const isComplete = ref(false)
 const hasReceived = ref(0)
 const hasReceivedShow = ref(0)
+const loaded = ref(false)
 
 
 function startCountDown(countDownDate) {
@@ -104,6 +105,7 @@ onMounted(async () => {
         function queryCycle() {
             QueryResult(uuid.value).then(async data => {
                 if (data.code == 0) {
+                    loaded.value = true
                     create_time.value = moment(data.data.out_time).format('YYYY-MM-DD HH:mm:ss') // 创建时间
                 }
                 if (!(data.code == 0 && data.data.status != 'success')) {
@@ -139,62 +141,71 @@ onMounted(async () => {
 
 
 <template>
+    <div class="loading-mask" v-if="!loaded">
+        <eos-icons-loading class="w-36px h-36px text-white" />
+    </div>
     <header class="flex mb-6">
         <img src="/public/logo.png" class="w-36px mr-1" alt />
         <span class="text-lg">CPay</span>
     </header>
     <div class="bg-white p-4 rounded-lg mb-2">
         <p class="flex justify-between text-sm mb-2 <iphone5:flex-wrap">
-            <span class="<iphone5:w-full">{{$t('orderNumber')}}:</span>
+            <span class="<iphone5:w-full">{{ $t('orderNumber') }}:</span>
             <span>{{ out_order_no }}</span>
         </p>
-        <p class="flex justify-between text-sm <iphone5:flex-wrap">
-            <span class="<iphone5:w-full">{{$t('orderCreateTime')}}:</span>
+        <p class="flex justify-between text-sm mb-2 <iphone5:flex-wrap">
+            <span class="<iphone5:w-full">{{ $t('orderCreateTime') }}:</span>
             <span>{{ create_time }}</span>
         </p>
-    </div>
-    <div class="bg-white p-4 rounded-lg mb-6">
-        <p class="text-sm mb-2">{{$t('remainTime')}}：</p>
-        <div class="text-center countdown text-3xl h-40px">
-            <template v-if="!isComplete && !isOverTime">
-                <div style="color:#7b71fe;">
-                    <span>{{ minutes }}</span>
-                    <span style="font-size:16px">{{ $t('minutes') }}</span>
-                    <span>{{ seconds }}</span>
-                    <span style="font-size:16px">{{ $t('seconds') }}</span>
-                </div>
-            </template>
-            <template v-if="isComplete">{{ $t('orderComplete') }}!</template>
-            <template v-else-if="isOverTime">{{ $t('expired') }}!</template>
-        </div>
-    </div>
-    <template v-if="!isComplete && !isOverTime">
-        <p
-            class="flex items-baseline justify-center text-md cursor-pointer"
-            id="copyEl2"
-            :value="pay_amount"
-        >
-            {{$t('needPay')}}：
-            <span class="text-red-500 text-3xl">{{ pay_amount }}</span>
-            <span class="ml-1">USDT</span>
-            <mdi-content-copy class="ml-1" />
+        <p class="flex justify-between text-sm <iphone5:flex-wrap">
+            <span class="<iphone5:w-full">{{ $t('alreadyPay') }}:</span>
+            <span>{{ hasReceivedShow }} USDT</span>
         </p>
-
-        <div class="qrcode-wrap mb-4">
-            <div class="qrcode">
-                <img :src="qrcodeSrc" alt style="width: 160px" />
+    </div>
+    <template v-if="loaded">
+        <div class="bg-white p-4 rounded-lg mb-6">
+            <p class="text-sm mb-2" v-if="!isComplete && !isOverTime">{{ $t('remainTime') }}：</p>
+            <div class="text-center countdown text-3xl h-40px">
+                <template v-if="!isComplete && !isOverTime">
+                    <div style="color:#7b71fe;">
+                        <span>{{ minutes }}</span>
+                        <span style="font-size:16px">{{ $t('minutes') }}</span>
+                        <span>{{ seconds }}</span>
+                        <span style="font-size:16px">{{ $t('seconds') }}</span>
+                    </div>
+                </template>
+                <template v-if="isComplete">{{ $t('orderComplete') }}!</template>
+                <template v-else-if="isOverTime">{{ $t('expired') }}!</template>
             </div>
         </div>
+        <template v-if="!isComplete && !isOverTime">
+            <p
+                class="flex items-baseline justify-center text-md cursor-pointer"
+                id="copyEl2"
+                :value="pay_amount"
+            >
+                {{ $t('needPay') }}：
+                <span class="text-red-500 text-3xl">{{ pay_amount }}</span>
+                <span class="ml-1">USDT</span>
+                <mdi-content-copy class="ml-1" />
+            </p>
 
-        <p
-            class="flex justify-center items-center flex-wrap cursor-pointer"
-            id="copyEl"
-            :value="rec_address"
-        >
-            <span class="md:hidden">{{$t('payAddress')}}： {{ shortAddress }}</span>
-            <span class="hidden md:block">{{$t('payAddress')}}： {{ rec_address }}</span>
-            <mdi-content-copy class="ml-1" />
-        </p>
+            <div class="qrcode-wrap mb-4">
+                <div class="qrcode">
+                    <img :src="qrcodeSrc" alt style="width: 160px" />
+                </div>
+            </div>
+
+            <p
+                class="flex justify-center items-center flex-wrap cursor-pointer"
+                id="copyEl"
+                :value="rec_address"
+            >
+                <span class="md:hidden">{{ $t('payAddress') }}： {{ shortAddress }}</span>
+                <span class="hidden md:block">{{ $t('payAddress') }}： {{ rec_address }}</span>
+                <mdi-content-copy class="ml-1" />
+            </p>
+        </template>
     </template>
 </template>
 

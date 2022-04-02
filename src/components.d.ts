@@ -4,6 +4,7 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    EosIconsLoading: typeof import('~icons/eos-icons/loading')['default']
     MdiContentCopy: typeof import('~icons/mdi/content-copy')['default']
   }
 }

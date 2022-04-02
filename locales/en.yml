@@ -12,6 +12,7 @@ orderCreateTime: Create time
 orderNumber: Order Number
 payAddress: Pay address
 payAmount: Pay amount
+payCheckout: payment check
 paySuccess: Pay success
 receiver: Receiver
 remainTime: Remaining payment time of order

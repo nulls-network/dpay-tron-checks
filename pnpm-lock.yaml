@@ -3,6 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@antfu/eslint-config': ^0.10.0
   '@iconify-json/carbon': ^1.0.7
+  '@iconify-json/eos-icons': ^1.1.1
   '@iconify-json/mdi': ^1.0.6
   '@intlify/vite-plugin-vue-i18n': ^2.4.0
   '@types/markdown-it-link-attributes': ^3.0.1
@@ -73,6 +74,7 @@ dependencies:
 devDependencies:
   '@antfu/eslint-config': registry.npmmirror.com/@antfu/eslint-config/0.10.0_eslint@8.1.0+typescript@4.4.4
   '@iconify-json/carbon': registry.npmmirror.com/@iconify-json/carbon/1.0.7
+  '@iconify-json/eos-icons': 1.1.1
   '@iconify-json/mdi': registry.npmmirror.com/@iconify-json/mdi/1.0.6
   '@intlify/vite-plugin-vue-i18n': registry.nlark.com/@intlify/vite-plugin-vue-i18n/2.4.0_vite@2.6.13+vue-i18n@9.1.9
   '@types/markdown-it-link-attributes': registry.nlark.com/@types/markdown-it-link-attributes/3.0.1
@@ -424,6 +426,16 @@ packages:
       '@ethersproject/properties': 5.5.0
       '@ethersproject/strings': 5.5.0
     dev: false
+
+  /@iconify-json/eos-icons/1.1.1:
+    resolution: {integrity: sha512-Dl9EPS6c2BDbY9lpkSibNLRIchdFjijFg6ZSpKf8WQO7ii7Jh6m6XnH0bHEv871WSG8BzV/U3McQYYi2MiRUXw==}
+    dependencies:
+      '@iconify/types': 1.1.0
+    dev: true
+
+  /@iconify/types/1.1.0:
+    resolution: {integrity: sha512-Jh0llaK2LRXQoYsorIH8maClebsnzTcve+7U3rQUSnC11X4jtPnFuyatqFLvMxZ8MLG8dB4zfHsbPfuvxluONw==}
+    dev: true
 
   /@types/http-proxy/1.17.8:
     resolution: {integrity: sha512-5kPLG5BKpWYkw/LVOGWpiq3nEVqxiN32rTgI53Sk12/xHFQ2rG3ehI9IO+O3W2QoKeyB92dJkoka8SUm6BX1pA==}
