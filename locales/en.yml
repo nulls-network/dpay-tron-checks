@@ -1,14 +1,18 @@
 alreadyPay: Already paid
 amount: Amount
-copySuccess: Copy success
+copySuccess: copy success
 expired: Expired
 invaildParam: Invalid Param
 minutes: Min
+needPay: You need to pay
 noFee: Not contains fee
 orderComplete: Order Completed
 orderCountdown: Order Countdown
+orderCreateTime: Create time
 orderNumber: Order Number
+payAddress: Pay address
 paySuccess: Pay success
 receiver: Receiver
+remainTime: Remaining payment time of order
 seconds: Sec
 waitPay: Waiting pay

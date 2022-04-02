@@ -11,6 +11,11 @@ export default defineConfig({
     typography(),
   ],
   theme: {
+    screens:{
+      iphone5:'321px',
+      sm:'640px',
+      md:'768px'
+    },
     extend: {
       typography: {
         DEFAULT: {

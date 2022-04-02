@@ -15,6 +15,7 @@
     "clipboard": "^2.0.10",
     "element-plus": "^1.2.0-beta.1",
     "ethers": "^5.5.4",
+    "moment": "^2.29.1",
     "nprogress": "^0.2.0",
     "pinia": "^2.0.0-rc.14",
     "prism-theme-vars": "^0.2.2",
