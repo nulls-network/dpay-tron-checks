@@ -11,6 +11,7 @@ orderCountdown: 订单倒计时
 orderCreateTime: 订单创建时间
 orderNumber: 订单号码
 payAddress: 支付地址
+payAmount: 支付金额
 paySuccess: 支付成功
 receiver: 收款地址
 remainTime: 剩余支付时间

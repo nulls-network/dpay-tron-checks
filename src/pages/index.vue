@@ -85,13 +85,13 @@ onMounted(async () => {
         getQrcode(rec_address.value).then(v => qrcodeSrc.value = v)
 
         initClipboard('copyEl', () => {
-            toastr.success(`${$t('payAddress')} ${$t('copySuccess')}: ${rec_address.value}`, '', {
+            toastr.success(`${$t('payAddress')}: ${rec_address.value} ${$t('copySuccess')}`, '', {
                 positionClass: 'toast-top-center',
                 timeOut: 2500,
             })
         })
         initClipboard('copyEl2', () => {
-            toastr.success(`${$t('amount')} ${$t('copySuccess')}: ${pay_amount.value} ${tokenName.value}`, '', {
+            toastr.success(`${$t('payAmount')}: ${pay_amount.value}USDT ${$t('copySuccess')}`, '', {
                 positionClass: 'toast-top-center',
                 timeOut: 2500,
             })
