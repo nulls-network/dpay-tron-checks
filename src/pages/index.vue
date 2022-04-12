@@ -130,6 +130,8 @@ onMounted(async () => {
                         }, 3000);
                     }
                 }
+            }).catch(e=>{
+                queryCycle()
             })
         }
         queryCycle()
@@ -180,14 +182,14 @@ onMounted(async () => {
         </div>
         <template v-if="!isComplete && !isOverTime">
             <p
-                class="flex items-baseline justify-center text-md cursor-pointer"
-                id="copyEl2"
-                :value="pay_amount"
+                class="flex items-baseline justify-center text-md"
             >
                 {{ $t('needPay') }}：
                 <span class="text-red-500 text-3xl">{{ pay_amount }}</span>
                 <span class="ml-1">USDT</span>
-                <mdi-content-copy class="ml-1" />
+                <span id="copyEl2" :value="pay_amount" class="cursor-pointer">
+                    <mdi-content-copy class="ml-1" />
+                </span>
             </p>
 
             <div class="qrcode-wrap mb-4">
