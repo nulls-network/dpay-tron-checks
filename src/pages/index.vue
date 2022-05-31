@@ -256,7 +256,6 @@ onMounted(async () => {
 </template>
 
 <script>
-import 'element-plus/es/components/tabs/style/css'
 import { defineComponent } from 'vue'
 import { ElTabs, ElTabPane } from 'element-plus'
 

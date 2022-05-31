@@ -8,6 +8,8 @@ import App from './App.vue'
 import 'virtual:windi-base.css'
 import 'virtual:windi-components.css'
 
+import 'element-plus/dist/index.css'
+
 import 'toastr/toastr.scss'
 
 // your custom styles here

@@ -9,6 +9,7 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import WindiCSS from 'vite-plugin-windicss'
 import VueI18n from '@intlify/vite-plugin-vue-i18n'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 export default defineConfig({
   resolve: {
@@ -57,6 +58,7 @@ export default defineConfig({
           prefix: false,
           enabledCollections: ['carbon', 'mdi','eos-icons'],
         }),
+        ElementPlusResolver(),
       ],
 
       dts: 'src/components.d.ts',
