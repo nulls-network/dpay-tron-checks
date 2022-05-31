@@ -15,6 +15,10 @@ payAmount: 支付金额
 payCheckout: 支付收银台
 paySuccess: 支付成功
 receiver: 收款地址
-remainTime: 剩余支付时间
+remainTime: 剩余支付时间( 过期订单将会失效 )
 seconds: 秒
 waitPay: 等待支付
+payOrder: 支付订单
+rechargeGuideTutorial: 支付引导教程
+payOrderTip: 支付订单前请确认转账金额是否包含手续费,请确保到账金额为{amount}USDT,否则无法自动到账。
+usdtTip: 如果你没有USDT,可以去以下交易所购买

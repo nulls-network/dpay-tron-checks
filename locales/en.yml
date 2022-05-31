@@ -15,6 +15,10 @@ payAmount: Pay amount
 payCheckout: payment check
 paySuccess: Pay success
 receiver: Receiver
-remainTime: Remaining payment time of order
+remainTime: Remaining payment time of order ( Expired orders will be void )
 seconds: Sec
 waitPay: Waiting pay
+payOrder: Pay Order
+rechargeGuideTutorial: Pay Guide Boot
+payOrderTip: Before paying the order, please confirm whether the transfer amount includes the handling fee. Please make sure that the amount received is {amount}USDT, otherwise it will not be automatically credited.
+usdtTip: If you don't have USDT, you can go to the following exchanges to buy

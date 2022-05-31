@@ -8,6 +8,7 @@ import { QueryResult } from '@/logic/queryResult'
 import moment from 'moment'
 
 const $t = useI18n().t;
+const { locale } = useI18n()
 
 const pay_token = ref()
 const deadline = ref()
@@ -33,6 +34,22 @@ const hasReceived = ref(0)
 const hasReceivedShow = ref(0)
 const loaded = ref(false)
 
+function changeFrameHeight() {
+    let ifm= document.getElementById("cpayRechargeBoot"); 
+    ifm.height=document.documentElement.clientHeight;
+}
+
+function downloadGate() {
+    window.open('https://www.gateio.vc/cn/mobileapp', '_blank')
+}
+
+function downloadOkey() {
+    window.open('https://www.okx.com/cn/download', '_blank')
+}
+
+function downloadBinance() {
+    window.open('https://www.binancezh.top/zh-CN/download', '_blank')
+}
 
 function startCountDown(countDownDate) {
     interval.value = setInterval(() => {
@@ -137,6 +154,7 @@ onMounted(async () => {
         queryCycle()
 
     }
+    changeFrameHeight()
 })
 
 </script>
@@ -150,66 +168,104 @@ onMounted(async () => {
         <img src="/public/logo.png" class="w-36px mr-1" alt />
         <span class="text-lg">CPay</span>
     </header>
-    <div class="bg-white p-4 rounded-lg mb-2">
-        <p class="flex justify-between text-sm mb-2 <iphone5:flex-wrap">
-            <span class="<iphone5:w-full">{{ $t('orderNumber') }}:</span>
-            <span>{{ out_order_no }}</span>
-        </p>
-        <p class="flex justify-between text-sm mb-2 <iphone5:flex-wrap">
-            <span class="<iphone5:w-full">{{ $t('orderCreateTime') }}:</span>
-            <span>{{ create_time }}</span>
-        </p>
-        <p class="flex justify-between text-sm <iphone5:flex-wrap">
-            <span class="<iphone5:w-full">{{ $t('alreadyPay') }}:</span>
-            <span>{{ hasReceivedShow }} USDT</span>
-        </p>
-    </div>
-    <template v-if="loaded">
-        <div class="bg-white p-4 rounded-lg mb-6">
-            <p class="text-sm mb-2" v-if="!isComplete && !isOverTime">{{ $t('remainTime') }}：</p>
-            <div class="text-center countdown text-3xl h-40px">
+    <el-tabs class="demo-tabs">
+        <el-tab-pane :label="$t('payOrder')">
+            <div class="bg-white p-4 rounded-lg mb-2">
+                <p class="flex justify-between text-sm mb-2 <iphone5:flex-wrap">
+                    <span class="<iphone5:w-full">{{ $t('orderNumber') }}:</span>
+                    <span>{{ out_order_no }}</span>
+                </p>
+                <p class="flex justify-between text-sm mb-2 <iphone5:flex-wrap">
+                    <span class="<iphone5:w-full">{{ $t('orderCreateTime') }}:</span>
+                    <span>{{ create_time }}</span>
+                </p>
+                <p class="flex justify-between text-sm <iphone5:flex-wrap">
+                    <span class="<iphone5:w-full">{{ $t('alreadyPay') }}:</span>
+                    <span>{{ hasReceivedShow }} USDT</span>
+                </p>
+            </div>
+            <template v-if="loaded">
+                <div class="bg-white p-4 rounded-lg mb-6">
+                    <p class="text-sm mb-2" v-if="!isComplete && !isOverTime">{{ $t('remainTime') }}：</p>
+                    <div class="text-center countdown text-3xl" :class="{'h-80px': !isComplete && !isOverTime,'h-40px': isComplete || isOverTime}">
+                        <template v-if="!isComplete && !isOverTime">
+                            <div style="color:#7b71fe;">
+                                <span>{{ minutes }}</span>
+                                <span style="font-size:16px">{{ $t('minutes') }}</span>
+                                <span>{{ seconds }}</span>
+                                <span style="font-size:16px">{{ $t('seconds') }}</span>
+                            </div>
+                            <p class="text-sm mb-4 mt-2" style="color:#ff9f43">{{ $t('payOrderTip',{amount: pay_amount}) }}</p>
+                        </template>
+                        <template v-if="isComplete" >{{ $t('orderComplete') }}!</template>
+                        <template v-else-if="isOverTime">{{ $t('expired') }}!</template>
+                    </div>
+                </div>
                 <template v-if="!isComplete && !isOverTime">
-                    <div style="color:#7b71fe;">
-                        <span>{{ minutes }}</span>
-                        <span style="font-size:16px">{{ $t('minutes') }}</span>
-                        <span>{{ seconds }}</span>
-                        <span style="font-size:16px">{{ $t('seconds') }}</span>
+                    <p
+                        class="flex items-baseline justify-center text-md"
+                    >
+                        {{ $t('needPay') }}：
+                        <span class="text-red-500 text-3xl">{{ pay_amount }}</span>
+                        <span class="ml-1">USDT</span>
+                        <span id="copyEl2" :value="pay_amount" class="cursor-pointer">
+                            <mdi-content-copy class="ml-1" />
+                        </span>
+                    </p>
+
+                    <div class="qrcode-wrap mb-4">
+                        <div class="qrcode">
+                            <img :src="qrcodeSrc" alt style="width: 160px" />
+                        </div>
+                    </div>
+
+                    <p
+                        class="flex justify-center items-center flex-wrap cursor-pointer"
+                        id="copyEl"
+                        :value="rec_address"
+                    >
+                        <span class="md:hidden">{{ $t('payAddress') }}： {{ shortAddress }}</span>
+                        <span class="hidden md:block">{{ $t('payAddress') }}： {{ rec_address }}</span>
+                        <mdi-content-copy class="ml-1" />
+                    </p>
+                    <div class="bg-white p-4 rounded-lg mb-6 mt-8">
+                        <div class="text-sm mb-2" style="color:#ff9f43">{{ $t('usdtTip') }}</div>
+                        <div class="flex items-baseline justify-between pl-8 pr-8 pt-4 pb-4">
+                            <div class="flex cursor-pointer" @click="downloadGate">
+                                <img src="/public/gate.png" class="w-36px mr-1" alt />
+                                <span class="text-lg" style="line-height: 2.2rem">GATE</span>
+                            </div>
+                            <div class="flex cursor-pointer" @click="downloadOkey">
+                                <img src="/public/okey.png" class="w-36px mr-1" alt />
+                                <span class="text-lg" style="line-height: 2.2rem">OKEY</span>
+                            </div>
+                            <div class="flex cursor-pointer" @click="downloadBinance">
+                                <img src="/public/binance.png" class="w-36px mr-1" alt />
+                                <span class="text-lg" style="line-height: 2.2rem">BINANCE</span>
+                            </div>
+                        </div>
                     </div>
                 </template>
-                <template v-if="isComplete">{{ $t('orderComplete') }}!</template>
-                <template v-else-if="isOverTime">{{ $t('expired') }}!</template>
-            </div>
-        </div>
-        <template v-if="!isComplete && !isOverTime">
-            <p
-                class="flex items-baseline justify-center text-md"
-            >
-                {{ $t('needPay') }}：
-                <span class="text-red-500 text-3xl">{{ pay_amount }}</span>
-                <span class="ml-1">USDT</span>
-                <span id="copyEl2" :value="pay_amount" class="cursor-pointer">
-                    <mdi-content-copy class="ml-1" />
-                </span>
-            </p>
-
-            <div class="qrcode-wrap mb-4">
-                <div class="qrcode">
-                    <img :src="qrcodeSrc" alt style="width: 160px" />
-                </div>
-            </div>
-
-            <p
-                class="flex justify-center items-center flex-wrap cursor-pointer"
-                id="copyEl"
-                :value="rec_address"
-            >
-                <span class="md:hidden">{{ $t('payAddress') }}： {{ shortAddress }}</span>
-                <span class="hidden md:block">{{ $t('payAddress') }}： {{ rec_address }}</span>
-                <mdi-content-copy class="ml-1" />
-            </p>
-        </template>
-    </template>
+            </template>
+        </el-tab-pane>
+        <el-tab-pane :label="$t('rechargeGuideTutorial')">
+            <iframe width="100%" id="cpayRechargeBoot" :onload="changeFrameHeight" :src="`https://cpay-tron-docs.vercel.app/${locale}/cpayRechargeBoot`"></iframe>
+        </el-tab-pane>
+    </el-tabs>
+    
 </template>
+
+<script>
+import 'element-plus/es/components/tabs/style/css'
+import { defineComponent } from 'vue'
+import { ElTabs, ElTabPane } from 'element-plus'
+
+export default defineComponent({
+  components: {
+    ElTabs, ElTabPane
+  },
+})
+</script>
 
 <style scoped lang="scss">
 .qrcode-wrap {
@@ -222,5 +278,9 @@ onMounted(async () => {
         border-radius: 8px;
         background-color: #fff;
     }
+}
+.demo-tabs > .el-tabs__content {
+  padding: 32px;
+  color: #6b778c;
 }
 </style>
