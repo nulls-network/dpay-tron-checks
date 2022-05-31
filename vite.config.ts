@@ -81,7 +81,7 @@ export default defineConfig({
     host:'0.0.0.0',
     proxy: {
       '/api': {
-        target: 'https://api-tron-v1.dpay.systems',
+        target: 'https://api-v1.cpay.network',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ''),
       },
