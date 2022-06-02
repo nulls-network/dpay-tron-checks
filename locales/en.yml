@@ -22,3 +22,4 @@ payOrder: Pay Order
 rechargeGuideTutorial: Pay Guide Boot
 payOrderTip: Before paying the order, please confirm whether the transfer amount includes the handling fee. Please make sure that the amount received is {amount}USDT, otherwise it will not be automatically credited.
 usdtTip: If you don't have USDT, you can go to the following exchanges to buy
+usdtTip1: If you can't open the webpage, you can copy the URL to another browser and try

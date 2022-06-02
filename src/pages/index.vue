@@ -230,7 +230,8 @@ onMounted(async () => {
                     </p>
                     <div class="bg-white p-4 rounded-lg mb-6 mt-8">
                         <div class="text-sm mb-2" style="color:#ff9f43">{{ $t('usdtTip') }}</div>
-                        <div class="flex items-baseline justify-between pl-8 pr-8 pt-4 pb-4">
+                        <div class="text-sm mb-2" style="color:#ff9f43">{{ $t('usdtTip1') }}</div>
+                        <div class="flex items-baseline justify-between">
                             <div class="flex cursor-pointer" @click="downloadGate">
                                 <img src="/public/gate.png" class="w-36px mr-1" alt />
                                 <span class="text-lg" style="line-height: 2.2rem">GATE</span>
