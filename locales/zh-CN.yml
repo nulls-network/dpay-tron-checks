@@ -23,3 +23,4 @@ rechargeGuideTutorial: 支付引导教程
 payOrderTip: 支付订单前请确认转账金额是否包含手续费,请确保到账金额为{amount}USDT,否则无法自动到账。
 usdtTip: 如果你没有USDT,可以去以下交易所购买
 usdtTip1: 如果打不开网页 ，可复制网址到其他浏览器尝试
+affiliatedAgreement: 所属协议

@@ -84,6 +84,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'https://api-v1.cpay.network',
+        // target: "http://192.168.10.12:7001",
         changeOrigin: true,
         rewrite: path => path.replace(/^\/api/, ''),
       },

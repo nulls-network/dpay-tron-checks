@@ -9,3 +9,10 @@ export const QueryResult = async function(uuid) {
     method: 'get',
   }).then(res => res.data)
 }
+
+export const QueryResult1 = async function(uuid) {
+  return axiosIns({
+    url: `/api/v2/order/${uuid}`,
+    method: 'get',
+  }).then(res => res.data)
+}

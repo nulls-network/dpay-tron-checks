@@ -4,7 +4,7 @@ import { BigNumber, utils } from 'ethers'
 import { formatAmount, getTokenSymbol, getQrcode, initClipboard, parseAmount, getTronWeb, formatToBlockTime } from '@/utils/index'
 import { OnTransferEvent } from '@/logic/transferEvent'
 import { getBlockEvent } from '@/logic/scanBlock'
-import { QueryResult } from '@/logic/queryResult'
+import { QueryResult1 } from '@/logic/queryResult'
 import moment from 'moment'
 
 const $t = useI18n().t;
@@ -14,7 +14,6 @@ const pay_token = ref()
 const deadline = ref()
 const pay_amount = ref()
 const rec_address = ref()
-const rec_chain = ref()
 const out_order_no = ref()
 const uuid = ref()
 const minutes = ref()
@@ -33,6 +32,14 @@ const isComplete = ref(false)
 const hasReceived = ref(0)
 const hasReceivedShow = ref(0)
 const loaded = ref(false)
+
+const data = ref({})
+const token = ref({})
+const tokenList = ref([])
+const addressObj = ref({
+    addr_base58: '',
+    addr_hex: ''
+})
 
 function changeFrameHeight() {
     let ifm= document.getElementById("cpayRechargeBoot"); 
@@ -72,18 +79,14 @@ function startCountDown(countDownDate) {
     }, 1000)
 }
 
+
 onMounted(async () => {
     const urlSearchParams = new URLSearchParams(window.location.search)
     const params = Object.fromEntries(urlSearchParams.entries())
-    pay_token.value = params.pay_token
-    deadline.value = params.deadline
-    pay_amount.value = params.pay_amount
-    rec_address.value = params.rec_address
-    rec_chain.value = params.rec_chain
+    
     uuid.value = params.uuid
-    out_order_no.value = params.out_order_no
-
-    const checkFileds = ['pay_token', 'deadline', 'pay_amount', 'rec_address', 'rec_chain', 'uuid', 'out_order_no']
+    
+    const checkFileds = ['uuid']
     isCheckParam.value = Object.values(params).length !== 0
     for (const key of checkFileds) {
         if (params[key] === undefined || params[key] === null) {
@@ -94,33 +97,40 @@ onMounted(async () => {
 
     console.log('isCheckParam', isCheckParam.value)
     if (isCheckParam.value) {
-        startCountDown(deadline.value * 1000)
-
-        shortAddress.value = `${rec_address.value.slice(0, 6)}...${rec_address.value.slice(-6)}`
-
-        getTokenSymbol(pay_token.value).then(v => tokenName.value = v)
-
-        getQrcode(rec_address.value).then(v => qrcodeSrc.value = v)
-
-        initClipboard('copyEl', () => {
-            toastr.success(`${$t('payAddress')}: ${rec_address.value} ${$t('copySuccess')}`, '', {
-                positionClass: 'toast-top-center',
-                timeOut: 2500,
-            })
-        })
-        initClipboard('copyEl2', () => {
-            toastr.success(`${$t('payAmount')}: ${pay_amount.value}USDT ${$t('copySuccess')}`, '', {
-                positionClass: 'toast-top-center',
-                timeOut: 2500,
-            })
-        })
-
-        const _amount = await parseAmount(pay_amount.value, pay_token.value)
-        const tronWeb = await getTronWeb()
-        const hexAddress = tronWeb.address.toHex(rec_address.value)
-
+        let flag = 0
         function queryCycle() {
-            QueryResult(uuid.value).then(async data => {
+            QueryResult1(uuid.value).then(async data => {
+                data.value = data.data
+                flag += 1
+                if(flag == 1) {
+                    tokenList.value = data.data.rec_token
+                    token.value = data.data.rec_token[0]
+                    deadline.value = data.data.deadline
+                    pay_amount.value = data.data.pay_amount*1
+                    addressObj.value = data.data.rec_wallet
+                    uuid.value = data.data.uuid
+                    out_order_no.value = data.data.out_order_no
+                    startCountDown(deadline.value * 1000)
+                    for(let i of tokenList.value) {
+                        if(i.chain_id == 100000001){
+                            i.qrcodeSrc = await getQrcode(addressObj.value.addr_base58)
+                        }else{
+                            i.qrcodeSrc = await getQrcode(addressObj.value.addr_hex)
+                        }
+                    }
+                    initClipboard('copyEl', () => {
+                        toastr.success(`${$t('payAddress')}${$t('copySuccess')}`, '', {
+                            positionClass: 'toast-top-center',
+                            timeOut: 2500,
+                        })
+                    })
+                    initClipboard('copyEl2', () => {
+                        toastr.success(`${$t('payAmount')}: ${pay_amount.value}USDT ${$t('copySuccess')}`, '', {
+                            positionClass: 'toast-top-center',
+                            timeOut: 2500,
+                        })
+                    })
+                }
                 if (data.code == 0) {
                     loaded.value = true
                     create_time.value = moment(data.data.out_time).format('YYYY-MM-DD HH:mm:ss') // 创建时间
@@ -202,34 +212,38 @@ onMounted(async () => {
                     </div>
                 </div>
                 <template v-if="!isComplete && !isOverTime">
-                    <p
-                        class="flex items-baseline justify-center text-md"
-                    >
-                        {{ $t('needPay') }}：
-                        <span class="text-red-500 text-3xl">{{ pay_amount }}</span>
-                        <span class="ml-1">USDT</span>
-                        <span id="copyEl2" :value="pay_amount" class="cursor-pointer">
-                            <mdi-content-copy class="ml-1" />
-                        </span>
-                    </p>
+                    <div class="bg-white p-4 rounded-lg mb-2">
+                        <el-tabs class="demo-tabs">
+                            <el-tab-pane v-for="item in tokenList" :key="item.chain_id" :label="item.chain_name">
+                                <p class="flex items-baseline justify-center text-md">
+                                    {{ $t('needPay') }}：
+                                    <span class="text-red-500 text-3xl">{{ pay_amount }}</span>
+                                    <span class="ml-1">{{item.chain_token_name}}</span>
+                                    <span id="copyEl2" :value="pay_amount" class="cursor-pointer">
+                                        <mdi-content-copy class="ml-1" />
+                                    </span>
+                                </p>
+                                <div class="qrcode-wrap mb-4">
+                                    <div class="qrcode">
+                                        <img :src="item.qrcodeSrc" alt style="width: 160px" />
+                                    </div>
+                                </div>
 
-                    <div class="qrcode-wrap mb-4">
-                        <div class="qrcode">
-                            <img :src="qrcodeSrc" alt style="width: 160px" />
-                        </div>
+                                <p
+                                    class="flex justify-center items-center flex-wrap cursor-pointer"
+                                    id="copyEl"
+                                    :value="item.chain_id == '100000001' ? addressObj.addr_base58 : addressObj.addr_hex"
+                                >
+                                    <span class="md:hidden">{{ $t('payAddress') }}： {{ item.chain_id == '100000001' ? `${addressObj.addr_base58.slice(0, 6)}...${addressObj.addr_base58.slice(-6)}` : `${addressObj.addr_hex.slice(0, 6)}...${addressObj.addr_hex.slice(-6)}`}}</span>
+                                    <span class="hidden md:block">{{ $t('payAddress') }}： {{ item.chain_id == '100000001' ? addressObj.addr_base58 : addressObj.addr_hex }}</span>
+                                    <mdi-content-copy class="ml-1" />
+                                </p>
+                            </el-tab-pane>
+                        </el-tabs>
+                        
                     </div>
 
-                    <p
-                        class="flex justify-center items-center flex-wrap cursor-pointer mb-2"
-                        id="copyEl"
-                        :value="rec_address"
-                    >
-                        <span class="md:hidden">{{ $t('payAddress') }}： {{ shortAddress }}</span>
-                        <span class="hidden md:block">{{ $t('payAddress') }}： {{ rec_address }}</span>
-                        <mdi-content-copy class="ml-1" />
-                    </p>
-                    <p class="flex justify-center items-center flex-wrap ">{{$t('affiliatedAgreement')}}：TRC20</p>
-                    <div class="bg-white p-4 rounded-lg mb-6 mt-4">
+                    <div class="bg-white p-4 rounded-lg mb-6 mt-8">
                         <div class="text-sm mb-2" style="color:#ff9f43">{{ $t('usdtTip') }}</div>
                         <div class="text-sm mb-2" style="color:#ff9f43">{{ $t('usdtTip1') }}</div>
                         <div class="flex items-baseline justify-between">
@@ -277,7 +291,7 @@ export default defineComponent({
         padding: 12px;
         border: 1px solid #fff;
         border-radius: 8px;
-        background-color: #fff;
+        background-color: #f6f6f6;
     }
 }
 .demo-tabs > .el-tabs__content {
